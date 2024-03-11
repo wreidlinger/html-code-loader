@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap 5 HTML Loader</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">HTML Loader</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav" id="dynamicNav">
+                <!-- Dynamic navigation links will be added here -->
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Container for static PNG file -->
+<div class="container mt-4" id="email-client-outlook-1>
+    <img src="static/et000/email-client_header_outlook-1.png" alt="Outlook Banner 1" class="img-fluid">
+</div>
+
+<!--
+<div class="container mt-4" id="email-client-outlook-2>
+    <img src="static/et000/email-client_header_outlook-2.png" alt="Outlook Banner 2" class="img-fluid">
+</div>
+
+<div class="container mt-4" id="email-client-thunderbird-1>
+    <img src="static/et000/email-client_header_thunderbird-1.png" alt="Thunderbird Banner 1" class="img-fluid">
+</div>
+-->
+
+<!-- Main Content Area -->
+<div class="container mt-4" id="content">
+    <!-- Content will be loaded here -->
+</div>
+
+<!-- Bootstrap JS and Popper.js (required for Bootstrap) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JavaScript for HTML loading -->
+<script>
+    function loadPage(pageName) {
+        fetch(`file:///${pageName}`)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('content').innerHTML = html;
+            })
+            .catch(error => console.error('Error loading page:', error));
+    }
+
+    // Dynamically generate navigation links based on HTML files in the same directory
+    fetch('./')
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const links = Array.from(doc.querySelectorAll('a[href$=".html"]')).map(link => {
+                return `<li class="nav-item"><a class="nav-link" href="#" onclick="loadPage('${link.getAttribute('href')}')">${link.innerText}</a></li>`;
+            });
+
+            // Add dynamic navigation links to the navbar
+            document.getElementById('dynamicNav').innerHTML = links.join('');
+        })
+        .catch(error => console.error('Error fetching HTML files:', error));
+</script>
+
+</body>
+</html>
